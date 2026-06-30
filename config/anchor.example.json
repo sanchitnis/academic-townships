@@ -1,0 +1,36 @@
+{
+  "node_configuration": {
+    "node_id": "anchor-node-ind-academic-01",
+    "region_id": "IN-EDU-CORRIDOR",
+    "operator_organization": "Academic Township Collaboration Cell",
+    "sync_frequency_seconds": 300,
+    "sovereignty_threshold": 0.2,
+    "global_safety_threshold": 0.1
+  },
+  "inference_backend": {
+    "provider": "ollama",
+    "base_url": "http://localhost:11434",
+    "primary_model": "llama3.1:8b-instruct-fp16",
+    "fallback_model": "mistral:7b-instruct-v0.3",
+    "context_window_tokens": 8192
+  },
+  "initiative_parameters": {
+    "township_size_acres_min": 500,
+    "township_size_acres_max": 700,
+    "institutional_autonomy_required": true,
+    "shared_infrastructure": [
+      "advanced_labs",
+      "incubation_centers",
+      "industry_rnd_clusters"
+    ]
+  },
+  "local_boundary_constraints": {
+    "ecological_impact_limit": "moderate",
+    "social_inclusion_floor": 0.75,
+    "regional_employment_linkage_min": 0.6
+  },
+  "network_handshake": {
+    "committee_portal_enabled": true,
+    "external_expert_channel_enabled": true
+  }
+}
