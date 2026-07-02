@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Academic Townships - Agentic Orchestrator (Template)
+Academic Townships - Agentic Orchestrator
 Creates critique stubs, synthesis snapshots, and profile balance summaries.
+Skill definitions live in .github/skills/. No API calls are made.
 """
 
 from __future__ import annotations
@@ -10,6 +11,8 @@ import argparse
 import datetime as dt
 import json
 from pathlib import Path
+
+SKILLS_DIR = Path(".github") / "skills"
 
 REQUIRED_SECTIONS = [
     "SEMANTIC VULNERABILITIES",
@@ -30,13 +33,15 @@ class Orchestrator:
         self.critiques_dir = self.charter_dir / "critiques"
         self.critiques_dir.mkdir(parents=True, exist_ok=True)
 
-    def pilot(self, model: str, focus: str) -> Path:
+    def pilot(self, focus: str) -> Path:
+        skill_file = SKILLS_DIR / "critique.md"
         stamp = dt.datetime.now(dt.UTC).strftime("%Y%m%d_%H%M%S")
-        filename = f"critique_{stamp}_{model.replace('-', '_')}_{focus}_v0.1.md"
+        filename = f"critique_{stamp}_{focus}_v0.1.md"
         path = self.critiques_dir / filename
 
-        content = f"""# Critique: {model}\n
+        content = f"""# Critique: {focus}\n
 Timestamp: {dt.datetime.now(dt.UTC).isoformat()}Z\n
+Skill: {skill_file}\n
 ## 1. SEMANTIC VULNERABILITIES\n- TBD\n
 ## 2. POWER AND GOVERNANCE GAPS\n- TBD\n
 ## 3. CROSS-STAKEHOLDER COHERENCE\n- TBD\n
@@ -49,7 +54,7 @@ Timestamp: {dt.datetime.now(dt.UTC).isoformat()}Z\n
         path.write_text(content, encoding="utf-8")
         manifest = {
             "timestamp": dt.datetime.now(dt.UTC).isoformat() + "Z",
-            "model": model,
+            "skill": str(skill_file),
             "focus": focus,
             "output": str(path.relative_to(self.workspace)),
         }
@@ -59,14 +64,28 @@ Timestamp: {dt.datetime.now(dt.UTC).isoformat()}Z\n
         return path
 
     def synthesize(self) -> Path:
+        skill_file = SKILLS_DIR / "synthesize.md"
         critiques = sorted(self.critiques_dir.glob("critique_*.md"))
-        wave = 1
+        existing = sorted(self.charter_dir.glob("SYNTHESIS_WAVE_*.md"))
+        wave = len(existing) + 1
         synth_path = self.charter_dir / f"SYNTHESIS_WAVE_{wave}.md"
-        lines = ["# Synthesis Wave 1", "", f"Critiques ingested: {len(critiques)}", ""]
+        lines = [
+            f"# Synthesis Wave {wave}",
+            "",
+            f"Skill: {skill_file}",
+            f"Critiques ingested: {len(critiques)}",
+            "",
+        ]
         for c in critiques:
             lines.append(f"- {c.name}")
         lines.append("")
         lines.append("## Convergences")
+        lines.append("- TBD")
+        lines.append("")
+        lines.append("## Divergences")
+        lines.append("- TBD")
+        lines.append("")
+        lines.append("## Proposed revisions shortlist")
         lines.append("- TBD")
         lines.append("")
         lines.append("## Unresolved tensions")
@@ -76,7 +95,9 @@ Timestamp: {dt.datetime.now(dt.UTC).isoformat()}Z\n
         return synth_path
 
     def balance(self) -> None:
+        skill_file = SKILLS_DIR / "balance.md"
         critiques = sorted(self.critiques_dir.glob("critique_*.md"))
+        print(f"Skill: {skill_file}")
         print(f"Critiques available: {len(critiques)}")
         for c in critiques:
             text = c.read_text(encoding="utf-8", errors="ignore").upper()
@@ -91,18 +112,17 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_pilot = sub.add_parser("pilot")
-    p_pilot.add_argument("--model", default="claude-sonnet")
-    p_pilot.add_argument("--focus", default="comprehensive")
+    p_pilot = sub.add_parser("pilot", help="Create a critique stub (skill: critique.md)")
+    p_pilot.add_argument("--focus", default="comprehensive", help="Focus lens for the critique")
 
-    sub.add_parser("synthesize")
-    sub.add_parser("balance")
+    sub.add_parser("synthesize", help="Aggregate critiques into a synthesis wave (skill: synthesize.md)")
+    sub.add_parser("balance", help="Validate critique structure completeness (skill: balance.md)")
 
     args = parser.parse_args()
     o = Orchestrator(Path("."))
 
     if args.command == "pilot":
-        o.pilot(args.model, args.focus)
+        o.pilot(args.focus)
     elif args.command == "synthesize":
         o.synthesize()
     elif args.command == "balance":

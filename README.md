@@ -9,10 +9,10 @@ A collaborative repository to design and govern India’s next-generation **acad
 The Ministry of Education initiative aims to move from isolated campuses to integrated academic districts that improve innovation, employability, and translational research through shared physical and digital commons.
 
 ## Collaboration model
-This repo uses a **committee + external expert + AI swarm** model:
-- Human committee steers milestones and approvals.
-- External experts contribute domain depositions and critique.
-- AI agents generate structured critiques, syntheses, and proposal drafts.
+This repo uses a **single human operator + agent skill files + local Python scripts** model:
+- One human operator steers all milestones, approvals, and commits via `LOOP.md`.
+- AI agents are invoked step-by-step using skill definitions in `.github/skills/`.
+- Local Python scripts handle file validation and stub generation — no external API calls.
 
 ## Phase 1 (current)
 Define and stress-test a polycentric charter for the township model before large-scale implementation.
@@ -29,12 +29,15 @@ Define and stress-test a polycentric charter for the township model before large
 - `docs/governance/` — operating rules, roles, naming, dissensus ledger
 - `memory/` — project memory systems
 - `wiki/` — shared knowledge commons
-- `scripts/` — orchestration and validation scripts
+- `scripts/` — local validation and orchestration scripts (no API calls)
 - `config/` — local node config templates
+- `.github/skills/` — agent skill definitions (one per loop step)
 
 ## Quick bootstrap
 ```bash
 cp config/anchor.example.json config/anchor.json
 python scripts/verify_node.py --config config/anchor.json
-python scripts/agentic_orchestrator.py pilot --model claude-sonnet --focus governance
+python scripts/agentic_orchestrator.py pilot --focus governance
 ```
+
+Then open `LOOP.md` and follow the step-by-step human control checklist.
