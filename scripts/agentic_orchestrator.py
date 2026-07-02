@@ -35,12 +35,13 @@ class Orchestrator:
 
     def pilot(self, focus: str) -> Path:
         skill_file = SKILLS_DIR / "critique.md"
-        stamp = dt.datetime.now(dt.UTC).strftime("%Y%m%d_%H%M%S")
+        now = dt.datetime.now(dt.UTC)
+        stamp = now.strftime("%Y%m%d_%H%M%S")
         filename = f"critique_{stamp}_{focus}_v0.1.md"
         path = self.critiques_dir / filename
 
         content = f"""# Critique: {focus}\n
-Timestamp: {dt.datetime.now(dt.UTC).isoformat()}Z\n
+Timestamp: {now.isoformat()}Z\n
 Skill: {skill_file}\n
 ## 1. SEMANTIC VULNERABILITIES\n- TBD\n
 ## 2. POWER AND GOVERNANCE GAPS\n- TBD\n
@@ -53,7 +54,7 @@ Skill: {skill_file}\n
 
         path.write_text(content, encoding="utf-8")
         manifest = {
-            "timestamp": dt.datetime.now(dt.UTC).isoformat() + "Z",
+            "timestamp": now.isoformat() + "Z",
             "skill": str(skill_file),
             "focus": focus,
             "output": str(path.relative_to(self.workspace)),
